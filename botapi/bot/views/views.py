@@ -58,7 +58,6 @@ class BotLoginViewSet(viewsets.ModelViewSet):
             if settings.qr_code is not '':
                 break
             time_out += 1
-        request_api.log('DONE')
         return HttpResponse(settings.qr_code, content_type="image/png")
 
     """

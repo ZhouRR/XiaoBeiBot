@@ -4,12 +4,19 @@ from django.conf import settings
 import urllib3
 import json
 import os
-import time
+import datetime
+from pytz import timezone
+
+cst_tz = timezone('Asia/Shanghai')
 
 
 def log(*args, console=True):
     if not settings.DEBUG:
         return
+    output(args, console=console)
+
+
+def output(*args, console=True):
     log_out = ''
     for arg in args:
         if arg is None:
@@ -21,8 +28,9 @@ def log(*args, console=True):
 
 
 def save_log(log_str):
-    date = time.strftime("%Y-%m-%d", time.localtime())
-    date_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    now = datetime.datetime.now(cst_tz)
+    date = now.strftime("%Y-%m-%d")
+    date_time = now.strftime("%Y-%m-%d %H:%M:%S")
     log_path = os.path.join(settings.BASE_DIR, 'cache/log/')
     log_last = ''
     if not os.path.exists(log_path):
@@ -32,35 +40,32 @@ def save_log(log_str):
             log_last = fp.read()
     with open(log_path + date + '.log', 'w', encoding='utf-8', errors='ignore') as fpo:
         fpo.write(log_last)
-        fpo.write(u'\n')
-        fpo.write(date_time)
-        fpo.write(u'\n')
-        fpo.write(log_str)
+        fpo.write(date_time + '   ' + log_str)
         fpo.write(u'\n')
 
 
 def get(url, content):
-    log('GET:', url)
+    output('GET:', url)
 
     pool_manger = urllib3.PoolManager()
     resp = pool_manger.request('GET', url, headers={
         'Content-Type': content
     })
-    log('status:', resp.status)
+    output('status:', resp.status)
     data = json.loads(resp.data.decode())
-
+    output('data:', json.dumps(data), console=False)
     return data
 
 
 def post(url, post_data, content):
-    log('POST:', url)
-    log('post_data', post_data)
+    output('POST:', url)
+    output('post_data', post_data)
 
     pool_manger = urllib3.PoolManager()
     resp = pool_manger.request('POST', url, body=post_data, headers={
         'Content-Type': content
     })
-    log('status:', resp.status)
-    log('data:', resp.data.decode(), console=False)
+    output('status:', resp.status)
     data = json.loads(resp.data.decode())
+    output('data:', json.dumps(data), console=False)
     return data
