@@ -40,8 +40,7 @@ def save_log(log_str):
             log_last = fp.read()
     with open(log_path + date + '.log', 'w', encoding='utf-8', errors='ignore') as fpo:
         fpo.write(log_last)
-        fpo.write(date_time + '   ' + log_str)
-        fpo.write(u'\n')
+        fpo.write(date_time + '   ' + log_str + u'\n')
 
 
 def get(url, content):
@@ -53,7 +52,7 @@ def get(url, content):
     })
     output('status:', resp.status)
     data = json.loads(resp.data.decode())
-    output('data:', json.dumps(data), console=False)
+    output('data:', data, console=False)
     return data
 
 
@@ -67,5 +66,5 @@ def post(url, post_data, content):
     })
     output('status:', resp.status)
     data = json.loads(resp.data.decode())
-    output('data:', json.dumps(data), console=False)
+    output('data:', data, console=False)
     return data

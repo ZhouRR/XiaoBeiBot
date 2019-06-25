@@ -50,7 +50,7 @@ def get_response(msg, user_name):
             len(data['result']['response_list'][0]['action_list']) == 0:
         return '我不能明白你想做什么。'
     reply = data['result']['response_list'][0]['action_list'][0]['say']
-    reply = reply + "\r\n----------parse_reply--------------\r\n" + parse_reply(data['result'])
+    reply = reply + "\r\n\r\n--------------分析--------------\r\n" + parse_reply(data['result'])
     request_api.log('reply: ', reply)
     settings.session_id = str(data['result']['session_id'])
     # 对话消息
@@ -60,23 +60,25 @@ def get_response(msg, user_name):
 def parse_reply(rep_res):
     reply = ''
     for response in rep_res['response_list']:
-        reply = '意图：\r\n'
+        reply += '技能ID：' + response['origin'] + '\r\n'
+        reply += '意图：\r\n'
         if 'schema' in response:
-            reply = reply + '--意图内容：%s 意图置信度：%s\r\n' % (response['schema']['intent'],
-                                                        str(response['schema']['intent_confidence']))
+            reply += '--意图内容：%s 意图置信度：%s\r\n' % (response['schema']['intent'],
+                                                 str(response['schema']['intent_confidence'])) + '\r\n'
             if 'slots' in response['schema']:
-                reply = reply + '--意图词槽：\r\n'
+                reply += '--意图词槽：\r\n'
                 for slot in response['schema']['slots']:
-                    reply = reply + "----词槽名称:%s 词槽值:%s 开始位置:%s 长度:%s 置信度 %s\r\n" % (slot['name'],
-                                                                                     slot['original_word'],
-                                                                                     str(slot['begin']),
-                                                                                     str(slot['length']),
-                                                                                     str(slot['confidence']))
+                    reply += "----词槽名称:%s 词槽值:%s 开始位置:%s 长度:%s 置信度 %s\r\n" % (slot['name'],
+                                                                              slot['original_word'],
+                                                                              str(slot['begin']),
+                                                                              str(slot['length']),
+                                                                              str(slot['confidence']))
         if 'action_list' in response:
             reply = reply + '--意图动作：\r\n'
             for action in response['action_list']:
                 reply = reply + "----动作ID:%s 回答:%s 置信度:%s\r\n" % (str(action['action_id']),
                                                                   action['say'], str(action['confidence']))
+        reply += '\r\n'
     return reply
 
 
