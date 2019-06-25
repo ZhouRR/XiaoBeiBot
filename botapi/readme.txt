@@ -1,3 +1,5 @@
+conda env create -f xiaobeibot.yaml
+
 conda deactivate
 conda activate xiaobeibot
 cd ..
