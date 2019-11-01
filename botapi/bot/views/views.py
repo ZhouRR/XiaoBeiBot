@@ -61,7 +61,7 @@ class BotLoginViewSet(viewsets.ModelViewSet):
         return HttpResponse(settings.qr_code, content_type="image/png")
 
     """
-    Retrieve a model instance.
+    Create a model instance.
     """
     def create(self, request, *args, **kwargs):
         return Response('', status=status.HTTP_400_BAD_REQUEST)
